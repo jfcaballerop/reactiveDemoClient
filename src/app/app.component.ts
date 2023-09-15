@@ -9,9 +9,10 @@ import { SseClient } from 'ngx-sse-client';
 })
 export class AppComponent implements OnInit {
   title = 'reactiveDemoClient';
-
+  msgData: any[] = [];
   constructor(private sseClient: SseClient) {
     // const headers = new HttpHeaders().set('Authorization', `Basic YWRtaW46YWRtaW4=`);
+
 
     this.sseClient.stream('http://localhost:8080/weatherstream', { keepAlive: true, reconnectionDelay: 1_000, responseType: 'event' }, {}, 'GET').subscribe((event) => {
       if (event.type === 'error') {
@@ -20,6 +21,8 @@ export class AppComponent implements OnInit {
       } else {
         const messageEvent = event as MessageEvent;
         console.info(`SSE request with type "${messageEvent.type}" and data "${messageEvent.data}"`);
+        this.msgData.push(messageEvent.data);
+
       }
     });
   }
